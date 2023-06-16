@@ -748,8 +748,7 @@ export default {
             var datos_ventas = {};
             var detalles_listado_limpio = [];
             var detalle_obj = {};
-            if (this.active_tab == 0) {
-                this.detalle_ventas_lista.map((detalle) => {
+            this.detalle_ventas_lista.map((detalle) => {
                     detalle_obj = {
                         id_venta: 0,
                         codigo_barra_producto: String(detalle.producto_detalle.codigo_barra_producto),
@@ -758,6 +757,7 @@ export default {
                     };
                     detalles_listado_limpio.push(detalle_obj);
                 });
+            if (this.active_tab == 0) {
                 axios.post(api_url + '/ventas/registrar/',
                     datos_ventas = {
                         venta: {
@@ -765,6 +765,8 @@ export default {
                             fecha_venta: this.venta_info.fecha_venta,
                             total_venta: Number(this.subtotal_venta),
                             total_iva: Number(this.venta_info.total_iva),
+                            is_active: true,
+                            is_credito: false
                         },
                         detalles: detalles_listado_limpio,
                     }).then((resp) => {
@@ -789,6 +791,7 @@ export default {
                         };
                         this.campo_identificador_cliente = "";
                         this.contador_tabla = 1;
+                        this.asignar_fecha_actual()
                     }).catch((error) => {
                         this.watch_toast('error', error.response.data.mensaje);
                         this.watch_toast('error', 'Ocurrió un error al registrar la Venta');
@@ -799,22 +802,19 @@ export default {
                     this.watch_toast('error', 'Debe seleccionar un Cliente');
                     return;
                 }
-                this.detalle_ventas_lista.map((detalle) => {
-                    detalle_obj = {
-                        id_creditofiscal: 0,
-                        codigo_barra_producto: String(detalle.producto_detalle.codigo_barra_producto),
-                        cantidad_producto_credito: detalle.cantidad_prod_venta,
-                        subtotal_detalle_credito: Number(detalle.subtotal_detalle_venta),
-                    };
-                    detalles_listado_limpio.push(detalle_obj);
-                });
-                axios.post(api_url + '/creditos/registrar/',
+                axios.post(api_url + '/ventas/registrar/',
                     datos_ventas = {
                         credito: {
                             id_cliente: this.cliente_info.id_cliente,
-                            fecha_credito: this.credito_fiscal_info.fecha_credito_fiscal,
-                            total_credito: Number(this.venta_info.total_venta),
-                            total_iva_credito: Number(this.venta_info.total_iva),
+                            id_venta: 0
+                        },
+                        venta: {
+                            nombre_cliente_venta: this.venta_info.nombre_cliente_venta,
+                            fecha_venta: this.venta_info.fecha_venta,
+                            total_venta: Number(this.subtotal_venta),
+                            total_iva: Number(this.venta_info.total_iva),
+                            is_active: true,
+                            is_credito: true
                         },
                         detalles: detalles_listado_limpio,
                     }).then(() => {
@@ -846,6 +846,7 @@ export default {
                         };
                         this.campo_identificador_cliente = "";
                         this.contador_tabla = 1;
+                        this.asignar_fecha_actual()
                     }).catch((error) => {
                         this.watch_toast('error', error.response.data.mensaje);
                         this.watch_toast('error', 'Ocurrió un error al registrar el Credito');
