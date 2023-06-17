@@ -387,7 +387,7 @@ import api_url from '../../config.js' ;
                     }
                 });
             },
-            saveEmpleado(values){
+            saveEmpleado(){
                 //event.preventDefault(); 
                 if(this.createForm!=null){
                     //alert("Funcion de agregar");
