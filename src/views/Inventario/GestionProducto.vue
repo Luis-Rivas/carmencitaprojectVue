@@ -166,7 +166,7 @@ export default {
     data() {
         return {
             listaProductos: [],
-            estado: null,
+            
             filtro: "activos",
             listaProductosFiltrados: [],
             productoSeleccionado: {},
