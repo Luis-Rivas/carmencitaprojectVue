@@ -15,7 +15,7 @@ import CreditoDesactivar from '../../components/Ventas/CreditoDesactivar.vue';
                     <p class="mt-2 flex-grow-0 flex-shrink-0 w-[500px] text-[31px] font-semibold text-left text-[#3056d3]">
                         Listado de Ventas
                     </p>
-                    <a href="/registrar_nueva_venta" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 h-auto my-auto mr-1 w-fit-content">Registrar nueva venta</a>
+                    <router-link to="/registrar_nueva_venta" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 h-auto my-auto mr-1 w-fit-content">Registrar nueva venta</router-link>
                 </div>
             </div>
 
