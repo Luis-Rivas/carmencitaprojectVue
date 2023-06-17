@@ -22,7 +22,7 @@ import { DocumentPlusIcon,QueueListIcon, SquaresPlusIcon, DocumentCheckIcon  } f
         <dropdown text="Facturación">
           <list-group>
             <list-group-item>
-              <a href="/registrar_nueva_venta" class="w-full h-full">
+              <a :href="/registrar_nueva_venta" class="w-full h-full">
                 <div class="flex items-center">
                   <DocumentPlusIcon class="h-4 w-4 mr-2 text-gray-500" />
                   <p>Registrar Ventas</p>
@@ -30,12 +30,12 @@ import { DocumentPlusIcon,QueueListIcon, SquaresPlusIcon, DocumentCheckIcon  } f
               </a>
             </list-group-item>
             <list-group-item>
-              <a href="/sales_list">
+              <router-link to="/sales_list">
                 <div class="flex items-center">
                   <QueueListIcon class="h-4 w-4 mr-2 text-gray-500" />
                   <p>Historial de ventas</p>
                 </div>
-              </a>
+              </router-link>
             </list-group-item>
           </list-group>
         </dropdown>
