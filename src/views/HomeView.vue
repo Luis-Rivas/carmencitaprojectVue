@@ -18,6 +18,7 @@ import { DocumentPlusIcon,QueueListIcon, SquaresPlusIcon, DocumentCheckIcon  } f
     <div class="container max-w-4xl mx-auto px-10 py-2 grid grid-cols-1 sm:grid-cols-3 gap-5">
       <!--Facturacion-->
       <the-card  variant="image"  img-src="@/assets/img/facturacion.jpg" img-alt="Desk">
+        <img src="@/assets/img/facturacion.jpg" alt="">
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Facturación</h5>
         <dropdown text="Facturación">
           <list-group>
