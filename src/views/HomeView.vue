@@ -83,12 +83,12 @@ import { DocumentPlusIcon,QueueListIcon, SquaresPlusIcon, DocumentCheckIcon  } f
               </a>
             </list-group-item>
             <list-group-item>
-              <a href="/listar_empleados">
+              <router-link to="/listar_empleados">
                 <div class="flex items-center">
                   <QueueListIcon class="h-4 w-4 mr-2 text-gray-500" />
                   <p>Lista de empleados</p>
                 </div>
-              </a>
+              </router-link>
             </list-group-item>
             <list-group-item>
               <a href="/gestion_cargos">
