@@ -103,7 +103,7 @@ import { DocumentPlusIcon,QueueListIcon, SquaresPlusIcon, DocumentCheckIcon  } f
       </the-card>
 
       <!--Asistencia-->
-      <the-card  variant="image"  img-src="src/assets/img/asistencia.jpg" img-alt="Desk">
+      <the-card  variant="image">
         <img src="@/assets/img/asistencia.jpg" alt="" />
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Registro de asistencias</h5>
         <dropdown text="Asistencia">
@@ -155,7 +155,7 @@ import { DocumentPlusIcon,QueueListIcon, SquaresPlusIcon, DocumentCheckIcon  } f
       </the-card>
 
       <!--Informes y estadisticas-->
-      <the-card  variant="image"  img-src="src/assets/img/estadisticas.jpg" img-alt="Desk">
+      <the-card  variant="image">
         <img src="@/assets/img/estadisticas.jpg" alt="" />
         <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Informes y Estadisticas</h5>
         <dropdown text="Informes">
