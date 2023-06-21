@@ -1,11 +1,11 @@
 <script setup>
 import {Field,ErrorMessage} from 'vee-validate';
-import api_url from '../../config';
+import api_url from "../../config";
 </script>
 
 <template>
 
-<Form class="h-[25%] max-w-[100%]  mx-auto lg:max-w-[45%] bg-white p-3 rounded-md shadow-md z-999 fixed top-[25%] left-0 right-0" @submit="agregarPrecioExtra()">
+<Form class=" h-[25%] max-w-[100%]  mx-auto lg:max-w-[45%] bg-white p-3 rounded-md shadow-md z-999 fixed top-[25%] left-0 right-0" @submit="agregarPrecioExtra()">
 
   <div class="grid grid-cols-1 md:grid-cols-4 gap-[2%]">
       <div class="col-span-3">
@@ -37,7 +37,7 @@ import api_url from '../../config';
         <button type="button" 
         class="display:inline-block mt-[0%] mb-[5%]  md:mt-[12%]  md:w-full md:mb-[0%] lg:mt-[20%] md:block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         @click="guardarPrecioExtra">
-            Guardar Medida
+            Guardar Cambios
         </button>
         <button type="button" 
         class=" display:inline-block mt-[0%] mb-[5%]  md:mt-[26%]  md:w-full md:mb-[0%]  lg:mt-[28%] md:block focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
@@ -53,6 +53,9 @@ import api_url from '../../config';
 <script>
 import axios from 'axios';
 export default {
+  props:{
+    precioExtraParametro:{},
+  },
   data(){
     return{
       precioExtra:{
@@ -60,6 +63,7 @@ export default {
         idUnidadMedida: 0,
         precio : 0,
         cantidad: 0,
+        id_precio_unidad_de_medida:"",
       },
        listaUnidadDeMedida:[],
        errorUnidadMedida:"",
@@ -69,15 +73,20 @@ export default {
   },
   mounted(){
     this.obtenerUnidadesDeMedida();
+    this.precioExtra.nombreUnidadDeMedida = this.precioExtraParametro.nombreUnidadDeMedida;
+    this.precioExtra.idUnidadMedida = this.precioExtraParametro.idUnidadMedida;
+    this.precioExtra.precio = this.precioExtraParametro.precio;
+    this.precioExtra.cantidad = this.precioExtraParametro.cantidad;
+    this.precioExtra.id_precio_unidad_de_medida = this.precioExtraParametro.id_precio_unidad_de_medida;
   },
   methods:{
     cerrarModal(){
-      this.$emit("controlEventoModal",null);
+      this.$emit("controlEventoModalEditarPrecioExtra",null);
     },
     guardarPrecioExtra(){
       if(this.validarUnidadDeMedida()){
         this.ponerNombreAUnidadDeMedida();
-        this.$emit("controlEventoModal",this.precioExtra);
+        this.$emit("controlEventoModalEditarPrecioExtra",this.precioExtra);
       }
     },
     ponerNombreAUnidadDeMedida(){
@@ -138,5 +147,4 @@ export default {
 .mensajeError{
   color:#dc2626;
 }
-
 </style>

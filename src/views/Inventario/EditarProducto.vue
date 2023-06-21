@@ -1,17 +1,18 @@
 <script setup>
-import ModalPrecioExtra from "../../components/Inventario/ModalPrecioExtra.vue";
+import ModalPrecioExtra from '../../components/Inventario/ModalPrecioExtra.vue'
+import ModalEditarPrecioExtra from '../../components/Inventario/ModalEditarPrecioExtra.vue'
 import NavBar from "../../components/NavBar.vue";
-import {Form,Field,ErrorMessage} from 'vee-validate';
-import api_url from "../../config";
+import api_url from '../../config';
 </script>
 <template>
-    <main>
+     <main>
+        
         <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 fixed top-20 left-0 right-0" 
         role="alert"
         v-if="activarAlerta==true">
         <span class="font-medium">{{ this.mensajeExito }}</span>
         </div>
-        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 fixed top-20 left-0 right-0" role="alert"
+        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-100 dark:bg-gray-800 dark:text-red-400 fixed top-10 left-0 right-0" role="alert"
         v-if="activarAlertaError==true">
         <span class="font-medium">{{ this.mensajeExito }}</span>
         </div>
@@ -22,7 +23,7 @@ import api_url from "../../config";
        <div class = "w-[80%] mx-auto">
         <div class = "container" >DETALLES DEL PRODUCTO</div>
 
-        <Form @submit="guradarProducto($event)">
+        <Form @submit="guradarCambiosProducto($event)">
             <div class="grid grid-cols-5">
 
                 <div class = "col-span-3 mt-[2%]">
@@ -114,22 +115,32 @@ import api_url from "../../config";
                                 <p class="bg-slate-50 p-2 border-b-2 w-[90%]">Precio($)</p>
                             </th>
                             <th>
+                                <p class="bg-slate-50 p-2 border-b-2 w-[90%]">Editar</p>
+                            </th>
+                            <th>
                                 <p class="bg-slate-50 p-2 border-b-2 w-[90%]" >Eliminar</p>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                     
-                        <tr class="border-b-2" v-for="precioExtra in listaPrecios" :key="precioExtra.id">
+                        <tr class="border-b-2" v-for="precioExtra in listaPrecios" :key="precioExtra.id_precio_unidad_de_medida">
                             <td class="p-3">{{ precioExtra.nombreUnidadDeMedida }}</td>
                             <td> {{precioExtra.cantidad }} </td>
                             <td>{{ precioExtra.precio }}</td>
-                            <td class="flex justify-center items-center p-3">
-                                <p> 
-                                    <button type="button" class="focus:outline-none text-red-800 bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 hover:text-white dark:focus:ring-red-900 px-2 py-1 text-sm font-bold" @click="eliminarPrecioExtra(precioExtra.idUnidadMedida)">X</button>
-                                </p>
+                            <td class="text-center p-3">
+                                <button type = "button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-[30px] text-sm px-5 py-2.5 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800 cursor-pointer"
+                                @click="editarPrecioExtra(precioExtra)">Editar</button>
+                            </td>
+                            <td class="text-center p-3">
+                                <div class="mt-[6%]">
+                                    <button type = "button" class="focus:outline-none text-red-800 bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 hover:text-white dark:focus:ring-red-900 px-2 py-1 text-sm font-bold"
+                                     @click="eliminarPrecioExtra(precioExtra)">X
+                                    </button>
+                                </div>
                             </td>
                         </tr>
+
                     </tbody>
                 </table>
             </div>
@@ -137,27 +148,42 @@ import api_url from "../../config";
             <button type="button" class="bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300" @click="controlModalPrecioExtra=true">Agregar Precio extra</button>
         </div>
         </div>
-        <div>
-        <button type="submit" class="mt-[2%] bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300">Guardar Producto</button>
+        <div class="mr-[25%]">
+            <button type="button" class = "inline-block ml-[20%] w-[20%] focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 rounded-lg text-sm px-5 py-2 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 font-bold" @click="cancelarModificacion">Regresar</button>
+            <button type="submit" class=" w-[20%] mt-[2%] bg-indigo-500 text-white text-sm font-bold py-2 px-4 rounded-md hover:bg-indigo-600 transition duration-300">Guardar Cambios</button>
         </div>
     </Form>
     </div>
         <Teleport to = "body">
             <ModalPrecioExtra v-if="controlModalPrecioExtra" @controlEventoModal="controlEventoModal"></ModalPrecioExtra>
         </Teleport>
+        <Teleport to="body">
+            <ModalEditarPrecioExtra v-if="controlModalEditarPrecioExtra" @controlEventoModalEditarPrecioExtra="controlEventoModalEditarPrecioExtra" :precioExtraParametro="this.precioExtraParametro">
+
+            </ModalEditarPrecioExtra>
+        </Teleport>
     </main>
 </template>
 <script>
-import { version } from 'vue';
 import axios from 'axios';
-
+import {Field,Form,ErrorMessage} from 'vee-validate';
+import { useRoute } from 'vue-router';
 export default {
     components:{
-        
+        Field,
+        Form,
+        ErrorMessage,
     },
     data(){
         return{
+            idProducto : "",
+            mensajeExito:"",
+            activarAlertaError:false,
+            activarAlerta:false,
+            listaPrecios: [],
             controlModalPrecioExtra:false,
+            controlModalEditarPrecioExtra:false,
+            precioExtraParametro:{},
             producto : {
                 nombreProducto : null,
                 codigoBarraProducto : null,
@@ -167,42 +193,137 @@ export default {
                 fotoProducto : null
             },
             urlFotoProducto:" ",
-            listaPrecios : [],
-            nombreEsValido:false,
-            codigoBarraProductoEsValido:false,
-            cantidadDisponibleEsValido:false,
-            precioUnitarioEsValido:false,
-            mensajeExito:"",
-            activarAlerta : false,
-            activarAlertaError:false,
-            existenPrecios:false
+            imagenProductoServidor:null
         }
     },
+    mounted(){
+        const route = useRoute();
+        this.idProducto = route.params.id_producto;
+        console.log(this.idProducto);
+        this.cargarProducto();
+        console.log(route.fullPath);
+    },
     methods:{
+        eliminarPrecioExtra(precioExtra){
+            let n = 0;
+            for(let precioExtraItem of this.listaPrecios){
+                if(precioExtra === precioExtraItem){
+                        this.listaPrecios.splice(n,1);
+                        break;
+                    }
+                    n++
+            }
+        },
+        asignarEstadoProducto(estadoProductoServidor){
+            console.log("");
+            if(estadoProductoServidor === 1){
+                this.producto.estaActivoProducto = "activo";
+            }else{
+                this.producto.estaActivoProducto = "desactivado";
+            }
+        },
+        cargarFoto(nombreFoto){
+            if(nombreFoto != ""){
+                axios.get(api_url + "/productos/"+this.idProducto+"/foto",{ responseType: 'arraybuffer' })
+                .then(
+                    response=>{
+                        let blob = new Blob([response.data],{type:"image/*"});
+                        let imageUrl = URL.createObjectURL(blob);
+                        this.urlFotoProducto = imageUrl;
+                        console.log(response.data);
+                        console.log("El valor de la url de la imagen es: ");
+                        console.log(imageUrl);
+                    }
+                )
+                .catch(
+                    response=>{
+                        console.log("Error al recuperar la foto del servidor");
+                    }
+                );
+            }else{
+
+            }
+        },
+        cargarProducto(){
+            let url = api_url + "/productos/precios/"+this.idProducto;
+            axios.get(url).
+            then(
+                (response)=>{
+                    let tempProducto = response.data.producto[0];
+                    this.producto.cantidadProductoDisponible = tempProducto.cantidad_producto_disponible;
+                    this.producto.codigoBarraProducto = tempProducto.codigo_barra_producto;
+                    this.producto.nombreProducto = tempProducto.nombre_producto;
+                    this.producto.precioUnitarioProducto = tempProducto.precio_unitario;
+                    this.asignarEstadoProducto(tempProducto.esta_disponible);
+                    this.cargarFoto(tempProducto.foto);
+                    this.cargarPreciosExtra();
+                }
+            )
+            .catch(
+                response=>{
+                    if(response.response.data.status === false){
+                        this.mensajeExito = "El codigo de barra de producto que envio de parametro no se encuentar en la base de datos";
+                        console.log(this.mensajeExito);
+                        this.controlAlertaError();
+                    }
+                }
+            );
+        },
+        cargarPreciosExtra(codigoBarraProducto){
+            axios.get(api_url + "/precio_lista_unidades/"+this.producto.codigoBarraProducto)
+            .then(
+                response=>{
+                    let tempListaPreciosExtra = response.data.lista_precios_extra;
+                    console.log(tempListaPreciosExtra);
+                    for(let i = 0; i < tempListaPreciosExtra.length; i++){
+                        let tempPrecioExtra = {
+                            id_precio_unidad_de_medida:"",
+                            nombreUnidadDeMedida:"",
+                            cantidad:"",
+                            precio:"",
+                            idUnidadMedida:"",
+                        };
+                        tempPrecioExtra.id_precio_unidad_de_medida = tempListaPreciosExtra[i].id_precio_unidad_de_medida;
+                        tempPrecioExtra.nombreUnidadDeMedida = tempListaPreciosExtra[i].unidad_de_medida.nombre_unidad_de_medida;
+                        tempPrecioExtra.cantidad = tempListaPreciosExtra[i].cantidad_producto;
+                        tempPrecioExtra.precio = tempListaPreciosExtra[i].precio_unidad_medida_producto;
+                        tempPrecioExtra.idUnidadMedida = tempListaPreciosExtra[i].id_unidad_de_medida;
+                        this.listaPrecios.push(tempPrecioExtra);
+                    }
+                }
+            )
+            .catch(
+                response=>{
+                    console.log(response);
+                }
+            );
+        },
+        controlEventoModalEditarPrecioExtra(precioExtra){
+            if(precioExtra != null){
+                let n = 0;
+               for(let itemPrecioExtra of this.listaPrecios){
+                   if(itemPrecioExtra.id_precio_unidad_de_medida == precioExtra.id_precio_unidad_de_medida){
+                        this.listaPrecios[n] = precioExtra;
+                        break;     
+                    }
+                    n++;
+                }
+            }
+            this.controlModalEditarPrecioExtra = false;
+        },
+        editarPrecioExtra(precioExtra){
+            this.precioExtraParametro = precioExtra;
+            this.controlModalEditarPrecioExtra = true;
+        },
         controlEventoModal(precioExtra){
             if(precioExtra){
-                console.log(" Se tiene que agregar un precio extra a las listas de precios extra ");
                 this.listaPrecios.push(precioExtra);
-                console.log(precioExtra);
             }
             this.controlModalPrecioExtra = false;
-        },
-        cargarImagen(e){
-            /*Retorna un tipo de dato blob el e.target.files[0]*/
-            e.preventDefault();
-            this.producto.fotoProducto = e.target.files[0];
-            let url = URL.createObjectURL(this.producto.fotoProducto);
-            this.urlFotoProducto = url;
-            console.log(url);
-        },
-        detenerCargaPorEventoArrastre(event){
-            event.preventDefault();
-        },
-        cargarImagenDrop(event){
-            event.preventDefault();
-            this.producto.fotoProducto = event.dataTransfer.files[0];
-            let url = URL.createObjectURL(this.producto.fotoProducto);
-            this.urlFotoProducto = url;
+        },  
+        guardarCambiosProductos(event){
+            event.preventDefault;
+            console.log("Se va a guardar los cambios del producto");
         },
         validarCampoTexto(value){
             if(value == null){
@@ -212,19 +333,6 @@ export default {
                 this.nombreEsValido = true;
             }
             this.nombreEsValido = true;
-            return true;
-        },
-        validarCodigoBarra(value){
-            console.log(value);
-            const expresionRegular = /^[0-9]{10,13}$/;
-            const regExpresion = new RegExp(expresionRegular);
-            if(value == null){
-                return "Este campo no puede quedar vacio";
-            }
-            else if(!regExpresion.test(value)){
-                return "El código de barra debe tener 10 o 13 digitos numericos.";
-            }
-            this.codigoBarraProductoEsValido = true;
             return true;
         },
         validarCantidadDisponible(value){
@@ -238,6 +346,18 @@ export default {
             this.cantidadDisponibleEsValido = true;
             return true;
         },
+        validarCodigoBarra(value){
+            const expresionRegular = /^[0-9]{10,13}$/;
+            const regExpresion = new RegExp(expresionRegular);
+            if(value == null){
+                return "Este campo no puede quedar vacio";
+            }
+            else if(!regExpresion.test(value)){
+                return "El código de barra debe tener 10 o 13 digitos numericos.";
+            }
+            this.codigoBarraProductoEsValido = true;
+            return true;
+        },
         validarPrecioUnitario(value){
             let regExpresion = /^[0-9]{1,5}\.?[0-9]{1,2}$/;
             if(value == null){
@@ -249,35 +369,49 @@ export default {
             this.precioUnitarioEsValido = true;
             return true;
         },
-        guradarProducto(event){
-            //event.preventDefault();
-            let bodyFormData = this.crearFormDataPostProducto();
-            axios.post(
-                api_url + "/productos",bodyFormData)
-            .then(response=>{
-                if(this.listaPrecios.length > 0){
-                    this.guaradarListaPrecios();
+        guradarCambiosProducto(){
+            let configuracionPut = "?_method=PUT";
+            let bodyData = this.crearFormDataPutProducto();
+            console.log(bodyData);
+            axios.post(api_url + "/productos/"+this.idProducto+configuracionPut,bodyData)
+            .then(
+                response=>{
+                    this.mensajeExito = response.data.mensaje;
+                    this.guardarCambiosListaPrecios();
                 }
-                else{
-                    console.log(response.data.mensaje);
+            )
+            .catch(
+                response=>{
+                    console.log(
+                        response.response.data
+                    );
+                }
+            );
+        },
+        guardarCambiosListaPrecios(){
+            let configuracionUrlPut = "?_method=PUT";
+            let dataBody = {
+                "lista_precios_unidades": this.listaPrecios,
+                "codigo_barra_actualizado":this.producto.codigoBarraProducto.toString(),
+            };
+            console.log(dataBody);
+            axios.post(api_url + "/precio_lista_unidades/"+this.idProducto+configuracionUrlPut,dataBody)
+            .then(
+                response=>{
                     this.mensajeExito = response.data.mensaje;
                     this.contorlAlerta();
                     this.clearForm();
                 }
-            })
+            )
             .catch(
-                (response)=>{
-                    console.log(response.response.data.mensaje);
+                response=>{
+                    console.log(response);
                     this.mensajeExito = response.response.data.mensaje[0];
                     this.controlAlertaError();
                 }
             );
         },
-        eliminarPrecioExtra(idUnidadMedida){
-            this.listaPrecios = this.listaPrecios.filter(precioExtra => precioExtra.idUnidadMedida!=idUnidadMedida);
-        },
-        crearFormDataPostProducto(){
-
+        crearFormDataPutProducto(){
             let bodyFormData = new FormData();
             bodyFormData.append("codigo_barra_producto",this.producto.codigoBarraProducto);
             bodyFormData.append("nombre_producto",this.producto.nombreProducto);
@@ -295,27 +429,22 @@ export default {
 
             return bodyFormData;
         },
-        guaradarListaPrecios(){
-           let dataBody = {
-                "codigo_barra_producto":this.producto.codigoBarraProducto,
-                "lista_precios_unidades": this.listaPrecios
-            };
-            console.log(dataBody);
-            axios.post(api_url + "/precios_lista_unidades_de_medida",dataBody)
-            .then(
-                response=>{
-                    this.mensajeExito = response.data.mensaje;
-                    this.contorlAlerta();
-                    this.clearForm();
-                }
-            )
-            .catch(
-                response=>{
-                    console.log(response);
-                    this.mensajeExito = response.response.data.mensaje[0];
-                    this.controlAlertaError();
-                }
-            );
+        cargarImagen(e){
+            /*Retorna un tipo de dato blob el e.target.files[0]*/
+            e.preventDefault();
+            this.producto.fotoProducto = e.target.files[0];
+            let url = URL.createObjectURL(this.producto.fotoProducto);
+            this.urlFotoProducto = url;
+            console.log(url);
+        },
+        cargarImagenDrop(event){
+            event.preventDefault();
+            this.producto.fotoProducto = event.dataTransfer.files[0];
+            let url = URL.createObjectURL(this.producto.fotoProducto);
+            this.urlFotoProducto = url;
+        },
+        detenerCargaPorEventoArrastre(event){
+            event.preventDefault();
         },
         contorlAlerta(){
             this.activarAlerta = true;
@@ -331,57 +460,14 @@ export default {
         },
         clearForm(){
             setTimeout(()=>{
-                //location.href = location.href;
-                this.$router.push({ name: "gestion_productos" } );
+                location.href = "/editar_producto/"+this.producto.codigoBarraProducto.toString();
+                //this.$router.push({ name: "editar_producto", params: { id_producto : this.producto.codigoBarraProducto.toString() } });
             },3000);
-            /**
-             * 
-             *  controlModalPrecioExtra:false,
-            producto : {
-                nombreProducto : null,
-                codigoBarraProducto : null,
-                cantidadProductoDisponible : null,
-                precioUnitarioProducto : null,
-                estaActivoProducto : "activo",
-                fotoProducto : null
-            },
-            urlFotoProducto:" ",
-            listaPrecios : [],
-            nombreEsValido:false,
-            codigoBarraProductoEsValido:false,
-            cantidadDisponibleEsValido:false,
-            precioUnitarioEsValido:false,
-            mensajeExito:"",
-            activarAlerta : false,
-            activarAlertaError:false,
-            existenPrecios:false
-             */
-                /*this.producto.nombreProducto = null;
-                this.producto.codigoBarraProducto   = null;
-                this.producto.cantidadProductoDisponible = null;
-                this.precioUnitarioProducto = 0;
-                this.estaActivoProducto = "activo";
-                this.fotoProducto = null;
-                this.urlFotoProducto = " ";
-                this.listaPrecios = [];*/
-            }
+            URL.revokeObjectURL(this.urlFotoProducto);
+        },
+        cancelarModificacion(){
+            this.$router.push({ name: "gestion_productos" } );
+        }
     }
-
 }
 </script>
-<style scoped>
-.bg-customColor{
-    background-color:#4F46E5;
-}
-
-.mensajeDeError{
-    color:#dc2626;
-}
-.corregirLongitud{
-    display: block;
-    width: 60%;
-    margin: 0px;
-    padding: 0px;
-}
-
-</style>

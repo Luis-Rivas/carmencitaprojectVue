@@ -1,10 +1,10 @@
 <script setup>
-
+import api_url from "../../config";
 </script>
 
 <template>
     
-<Form class="w-full max-w-sm mx-auto bg-white p-8 rounded-md shadow-md z-999 fixed top-20 left-0 right-0" @submit="guardarCargo()">
+<Form class="h-[50%] w-full max-w-sm mx-auto bg-white p-8 rounded-md shadow-md z-999 fixed top-20 left-0 right-0" @submit="guardarCargo()">
 <div class=" bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert" v-if="errorAlGuardar">
   <strong class="font-bold">Error guardar cargo</strong>
   <span class="block sm:inline">{{ this.mensajeConsulta }}</span>
@@ -88,7 +88,7 @@ export default {
             this.cargo.salario_cargo = this.salario_cargo;
             this.cargo.id_jornada_laboral_diaria = this.id_jornada_laboral_diaria;
             console.log(this.cargo);
-            axios.post("http://127.0.0.1:8000/api/cargos",this.cargo).then(
+            axios.post(api_url+"/cargos",this.cargo).then(
                 response=>{
                     console.log(response.data.respuesta)
                     if(response.data.respuesta){
@@ -133,7 +133,7 @@ export default {
             return true;
         },
         obtenerListaHorarios(){
-            axios.get("http://127.0.0.1:8000/api/jornadas_laborales").then(
+            axios.get(api_url+"/jornadas_laborales_diarias").then(
                 response=>{
                     this.listaHorarioLaboral = response.data;
                 }
