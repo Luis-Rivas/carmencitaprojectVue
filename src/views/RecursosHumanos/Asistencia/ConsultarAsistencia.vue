@@ -65,7 +65,7 @@ import { CalendarIcon } from '@heroicons/vue/24/outline'
               <div>
                 <span>Ausencias</span>
               </div><div>
-                <span class="font-bold text-xl">{{ 2 }}</span>
+                <span class="font-bold text-xl">{{ incapacidades.length }}</span>
               </div>
               <div>
                 <span>Incapacidades</span>
@@ -121,7 +121,8 @@ export default {
       datosAuth: null,
       id_empleado: null,
       isGerente: false,
-      ausencias: []
+      ausencias: [],
+      incapacidades: []
     }
   },
   created() {
@@ -210,6 +211,29 @@ export default {
           this.watchToast('error', 'Ocurrió un error al obtener los registros de ausencias')
         })
         .finally(() => {
+          this.getIncapacidades()
+        })
+    },
+    getIncapacidades() {
+      const user = this.id_empleado
+      axios
+        .get('/api/incapacidades/listado', {
+          params: {
+            id_empleado: user,
+          }
+        })
+        .then(
+          (response) => (
+            console.log(response.data, 'incapacidades'),
+            (this.incapacidades = response.data.data),
+            this.setIncapacidadesInCalendar()
+          )
+        )
+        .catch((error) => {
+          console.log(error)
+          this.watchToast('error', 'Ocurrió un error al obtener los registros de incapacidades')
+        })
+        .finally(() => {
           this.watchLoader(false)
         })
     },
@@ -252,7 +276,27 @@ export default {
         calendario.events.push(ausencia)
       })
     },
-
+    setIncapacidadesInCalendar() {
+      let calendario = this.calendarOptions
+      this.incapacidades.forEach((element) => {
+        let title = ''
+        let color = ''
+        const estado = element?.estado?.nombre
+        estado == 'Aprobado'
+          ? (color = '#006400', title = 'IN Aprobada')
+          : estado == 'Rechazado'
+          ? (color = '#A52A2A', title = 'IN Rechazada')
+          : (color = '#FF7F50', (title = 'IN Pendiente'))
+        let incapacidad = {
+          title: title,
+          start: element.fecha_inicio,
+          end: element.fecha_fin,
+          incapacidad: element,
+          color: color
+        }
+        calendario.events.push(incapacidad)
+      })
+    },
     handleRangeChange(info) {
       this.fechaInicio = moment(info.startStr).format('YYYY-MM-DD')
       this.fechaFin = moment(info.endStr).format('YYYY-MM-DD')

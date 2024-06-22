@@ -105,8 +105,13 @@ import { RouterLink } from 'vue-router'
       </div>
     </div>
 
-    <ModalJustificar v-if="showModal" @recargar="getAsistencias" titulo="Justificar ausencia" v-model="showModal" :ausencia="ausenciaSelected"></ModalJustificar>
-
+    <ModalJustificar
+      v-if="showModal"
+      @recargar="getAsistencias"
+      titulo="Justificar ausencia"
+      v-model="showModal"
+      :ausencia="ausenciaSelected"
+    ></ModalJustificar>
   </main>
 </template>
 
@@ -134,6 +139,7 @@ export default {
       empleado: {},
       asistencias: [],
       ausencias: [],
+      incapacidades: [],
       asistenciaMarcada: false,
       mensajes: [],
       calendarOptions: {
@@ -222,10 +228,7 @@ export default {
       this.ausencias = []
       axios
         .get(
-            '/api/ausencias/empleado?fechaInicio=' +
-            this.fechaInicio +
-            '&fechaFin=' +
-            this.fechaFin
+          '/api/ausencias/empleado?fechaInicio=' + this.fechaInicio + '&fechaFin=' + this.fechaFin
         )
         .then(
           (response) => (
@@ -237,6 +240,29 @@ export default {
         .catch((error) => {
           console.log(error)
           this.watchToast('error', 'Ocurrió un error al obtener los registros de ausencias')
+        })
+        .finally(() => {
+          this.getIncapacidades()
+        })
+    },
+    getIncapacidades() {
+      const user = JSON.parse(localStorage.authUser).user.id
+      axios
+        .get('/api/incapacidades/listado', {
+          params: {
+            id_empleado: user,
+          }
+        })
+        .then(
+          (response) => (
+            console.log(response.data, 'incapacidades'),
+            (this.incapacidades = response.data.data),
+            this.setIncapacidadesInCalendar()
+          )
+        )
+        .catch((error) => {
+          console.log(error)
+          this.watchToast('error', 'Ocurrió un error al obtener los registros de incapacidades')
         })
         .finally(() => {
           this.watchLoader(false)
@@ -266,11 +292,10 @@ export default {
         if (element?.justificacion_ausencia) {
           const estado = element?.justificacion_ausencia?.estado?.nombre
           estado == 'Aprobado'
-            ? (color = '#3CA745')
+            ? (color = '#3CA745', title = 'AU Aprobada')
             : estado == 'Rechazado'
-            ? (color = 'red')
-            : (color = '#30A2D3')
-          title = estado
+            ? (color = 'red', title = 'AU Rechazada')
+            : (color = '#30A2D3', (title = 'AU Pendiente'))
         } else {
           title = 'Ausencia'
           color = '#FEBD15'
@@ -282,6 +307,27 @@ export default {
           color: color
         }
         calendario.events.push(ausencia)
+      })
+    },
+    setIncapacidadesInCalendar() {
+      let calendario = this.calendarOptions
+      this.incapacidades.forEach((element) => {
+        let title = ''
+        let color = ''
+        const estado = element?.estado?.nombre
+        estado == 'Aprobado'
+          ? (color = '#006400', title = 'IN Aprobada')
+          : estado == 'Rechazado'
+          ? (color = '#A52A2A', title = 'IN Rechazada')
+          : (color = '#FF7F50', (title = 'IN Pendiente'))
+        let incapacidad = {
+          title: title,
+          start: element.fecha_inicio,
+          end: element.fecha_fin,
+          incapacidad: element,
+          color: color
+        }
+        calendario.events.push(incapacidad)
       })
     },
     handleEventClick(info) {
@@ -301,7 +347,6 @@ export default {
       console.log(this.fechaInicio, this.fechaFin)
     }
   },
-  watch: {
-  }
+  watch: {}
 }
 </script>
