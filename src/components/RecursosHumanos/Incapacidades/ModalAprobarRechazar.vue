@@ -35,7 +35,9 @@
 import { ref, onMounted, defineEmits } from 'vue'
 import Dialog from 'primevue/dialog'
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
 
+const toast = useToast()
 const visible = ref(false)
 const emit = defineEmits(['actualizarIncapacidades'])
 
@@ -72,9 +74,11 @@ const cambiarEstadoIncapacidad = (estadoCambiar) => {
     .then(response => {
       console.log(response.data)
       emit('actualizarIncapacidades')  // Emitir el evento
+      toast.success('La operación se realizó con éxito.')
     })
     .catch(error => {
       console.error(error)
+      toast.error('Ocurrió un error durante la operación.')
     })
 }
 
