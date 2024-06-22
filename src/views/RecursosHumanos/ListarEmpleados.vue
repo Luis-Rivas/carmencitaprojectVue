@@ -92,15 +92,18 @@ export default {
   },
   methods: {
     obtenerListaEmpleados() {
+      this.watchLoader(true)
       axios
         .get(api_url + '/empleados')
         .then((response) => {
           this.listaEmpleados = response.data.data
           console.log(this.listaEmpleados)
+          this.watchLoader(false)
         })
         .catch((response) => {
           console.log('Ocurrio un error al obtener los registros del servidor')
           console.log(response)
+          this.watchLoader(false)
           if (response.response.data.tienePermiso === false) {
             alert(response.response.data.mensaje)
             setTimeout(() => {

@@ -187,14 +187,6 @@ import {
                 </div>
               </router-link>
             </list-group-item>
-            <list-group-item v-if="rolCurrenUser == GERENTE">
-              <router-link to="/recursos_humanos/historial_asistencia">
-                <div class="flex items-center">
-                  <SquaresPlusIcon class="h-4 w-4 mr-2 text-gray-500" />
-                  <p>Incapacidades</p>
-                </div>
-              </router-link>
-            </list-group-item>
           </list-group>
         </dropdown>
       </the-card>

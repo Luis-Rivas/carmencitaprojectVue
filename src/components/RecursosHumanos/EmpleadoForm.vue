@@ -617,6 +617,7 @@ export default {
         })
     },
     saveEmpleado(values) {
+      this.watchLoader(true)
       //event.preventDefault();
       if (this.createForm != null) {
         //alert("Funcion de agregar");
@@ -646,6 +647,7 @@ export default {
             response.data.message.forEach((mensaje) => {
               showMessages(response.data.status, mensaje)
             })
+            this.watchLoader(false)
             this.$router.push('/recursos_humanos/listar_empleados')
             this.$router.go(1)
           })
@@ -653,6 +655,7 @@ export default {
             error.response.data.message.forEach((element) => {
               showMessages(error.response.data.status, element)
             })
+            this.watchLoader(false)
           })
       } else {
         //alert("Funcion de actualizar");
