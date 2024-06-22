@@ -80,7 +80,7 @@
               <td class="text-center p-[1%]">
                 {{ detallePlanilla.dias_laborados }}
               </td>
-              <td class="text-center p-[1%]">{{ Number(detallePlanilla.base).toFixed(2) || 0 }}</td>
+              <td class="text-center p-[1%]">${{ Number(detallePlanilla.base).toFixed(2) || 0 }}</td>
               <td class="text-center p-[1%]">
                 <button
                   v-if="habilitarEdicion && (!detallePlanilla.date_emision_boleta && detallePlanilla.monto_vacaciones < 1 && !presionados.includes(detallePlanilla.id) && detallePlanilla.vacaciones)"
@@ -89,26 +89,26 @@
                   @click="aplicarVacaciones(detallePlanilla.id)">
                   Aplicar
                 </button>
-                <span v-else="">{{ Number(detallePlanilla.monto_vacaciones).toFixed(2) || 0 }}</span>
+                <span v-else="">${{ Number(detallePlanilla.monto_vacaciones).toFixed(2) || 0 }}</span>
                 <input type="hidden" :value="detallePlanilla.monto_vacaciones" :id="'vacaciones_' + detallePlanilla.id"
                   class="monto-vacaciones">
               </td>
-              <td class="text-center p-[1%]">{{ Number(detallePlanilla.monto_aguinaldo).toFixed(2) || 0 }}</td>
+              <td class="text-center p-[1%]">${{ Number(detallePlanilla.monto_aguinaldo).toFixed(2) || 0 }}</td>
               <td class="text-center p-[1%]">
                 <input v-if="habilitarEdicion && !detallePlanilla.date_emision_boleta" type="number"
                   :model="detallePlanilla.monto_bonos" :name="'bono_' + detallePlanilla.id"
                   :id="'bono_' + detallePlanilla.id" class="border-slate-200 rounded-lg w-24"
                   :value="detallePlanilla.monto_bonos" @input="aplicarBono(detallePlanilla)" min="0">
-                <span v-else>{{ Number(detallePlanilla.monto_bonos).toFixed(2) || 0 }} <input type="hidden"
+                <span v-else>${{ Number(detallePlanilla.monto_bonos).toFixed(2) || 0 }} <input type="hidden"
                     :value="detallePlanilla.monto_bonos" :id="'bono_' + detallePlanilla.id" class="monto-bonos"></span>
               </td>
-              <td class="text-center p-[1%]">{{ Number(detallePlanilla.monto_gravable_cotizable).toFixed(2) || 0 }}</td>
-              <td class="text-center p-[1%]">{{ Number(detallePlanilla.monto_isss).toFixed(2) || 0 }}</td>
-              <td class="text-center p-[1%]">{{ Number(detallePlanilla.monto_afp).toFixed(2) || 0 }}</td>
-              <td class="text-center p-[1%]">{{ Number(detallePlanilla.monto_isss_patronal).toFixed(2) || 0 }}</td>
-              <td class="text-center p-[1%]">{{ Number(detallePlanilla.monto_afp_patronal).toFixed(2) || 0 }}</td>
-              <td class="text-center p-[1%]">{{ Number(detallePlanilla.monto_pago_empleado).toFixed(2) || 0 }}</td>
-              <td class="text-center p-[1%]">{{ Number(detallePlanilla.monto_planilla_unica).toFixed(2) || 0 }}</td>
+              <td class="text-center p-[1%]">${{ Number(detallePlanilla.monto_gravable_cotizable).toFixed(2) || 0 }}</td>
+              <td class="text-center p-[1%]">${{ Number(detallePlanilla.monto_isss).toFixed(2) || 0 }}</td>
+              <td class="text-center p-[1%]">${{ Number(detallePlanilla.monto_afp).toFixed(2) || 0 }}</td>
+              <td class="text-center p-[1%]">${{ Number(detallePlanilla.monto_isss_patronal).toFixed(2) || 0 }}</td>
+              <td class="text-center p-[1%]">${{ Number(detallePlanilla.monto_afp_patronal).toFixed(2) || 0 }}</td>
+              <td class="text-center p-[1%]">${{ Number(detallePlanilla.monto_pago_empleado).toFixed(2) || 0 }}</td>
+              <td class="text-center p-[1%]">${{ Number(detallePlanilla.monto_planilla_unica).toFixed(2) || 0 }}</td>
               <td v-if="listaDetallesPlanilla.date_emision_boleta" class="text-center mx-2">
                 <router-link :to="{ name: 'boleta_pago', params: { idDetallePlanilla: detallePlanilla.id } }"
                   class="w-auto h-auto p-2 rounded bg-emerald-500 tex-sm font-medium text-center text-white">

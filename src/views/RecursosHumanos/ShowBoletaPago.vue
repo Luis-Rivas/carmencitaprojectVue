@@ -48,7 +48,7 @@
                     <p class="mb-1"><strong>Premios:</strong> $0.00</p>
                     <p class="mb-1"><strong>Dietas:</strong> $0.00</p>
                     <p class="mb-1"><strong>Otros ingresos:</strong> $0.00</p>-->
-                    <p class="mt-4"><strong>Total ingresos:</strong> ${{ detallePlanilla.monto_gravable_cotizable }}</p>
+                    <p class="mt-4"><strong>Total ingresos:</strong> ${{ Number(detallePlanilla.monto_gravable_cotizable).toFixed(2) }}</p>
                 </div>
                 <div>
                     <h2 class="text-xl font-semibold mb-2">(-) Egresos y deducciones</h2>
