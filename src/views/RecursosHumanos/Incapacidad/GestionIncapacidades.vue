@@ -13,6 +13,7 @@ import ModalAprobarRechazar from '@/components/RecursosHumanos/Incapacidades/Mod
           <button
             v-if="!isGerente"
             class="text-sm bg-[#4F46E5] text-white py-2 px-10 rounded-lg m-1"
+            @click="showModalDetalle = true; isStoring = true"
           >
             Solicitar
           </button>
@@ -98,7 +99,6 @@ import ModalAprobarRechazar from '@/components/RecursosHumanos/Incapacidades/Mod
     'bg-[#4F46E5]': item.estado.nombre === 'Pendiente',
     'bg-[#7b75e6]': item.estado.nombre !== 'Pendiente'
   }"
-              :disabled="item.estado.nombre !== 'Pendiente'"
             >
               Ver
             </button>
@@ -130,12 +130,19 @@ import ModalAprobarRechazar from '@/components/RecursosHumanos/Incapacidades/Mod
             <button
               v-if="!isGerente"
               class="text-sm bg-[#4F46E5] text-white font-semibold py-2 px-5 rounded-lg m-1"
+              @click="verDetalleSolicitud(item)"
             >
               Ver
             </button>
             <button
               v-if="!isGerente"
               class="text-sm bg-[#13C296] text-white font-semibold py-2 px-5 rounded-lg m-1"
+              @click="verDetalleSolicitud(item); isEditing = true"
+              :class="{
+    'bg-[#13C296]': item.estado.nombre === 'Pendiente',
+    'bg-[#6fd6bc]': item.estado.nombre !== 'Pendiente'
+  }"
+              :disabled="item.estado.nombre !== 'Pendiente'"
             >
               Editar
             </button>
@@ -143,6 +150,11 @@ import ModalAprobarRechazar from '@/components/RecursosHumanos/Incapacidades/Mod
               v-if="!isGerente"
               @click="eliminarSolicitud(item)"
               class="text-sm bg-[#B91C1C] text-white font-semibold py-2 px-5 rounded-lg m-1"
+              :class="{
+    'bg-[#B91C1C]': item.estado.nombre === 'Pendiente',
+    'bg-[#d67e7e]': item.estado.nombre !== 'Pendiente'
+  }"
+              :disabled="item.estado.nombre !== 'Pendiente'"
             >
               Eliminar
             </button>
@@ -156,8 +168,11 @@ import ModalAprobarRechazar from '@/components/RecursosHumanos/Incapacidades/Mod
   </main>
 
   <ModalDetalleIncapacidad :show="showModalDetalle" v-if="showModalDetalle" :title="'Detalle de solicitud'"
-                           :data="incapacidadSelected" :isGerente="isGerente" class="relative" :width="'700px'"
-                           @close="closeModal">
+                           :data="incapacidadSelected" :isGerente="isGerente" :isStoring="isStoring"
+                           :isEditing="isEditing" class="relative"
+                           :width="'700px'"
+                           @close="closeModal"
+                           @crearIncapacidad="incapacidadCreada">
   </ModalDetalleIncapacidad>
   <ModalAprobarRechazar :show="showModalAprobarRechazar" v-if="showModalAprobarRechazar"
                         :data="incapacidadSelected"
@@ -174,6 +189,7 @@ import axios from 'axios'
 import VTable from '@/components/VTable.vue'
 import VPagination from '@/components/VPagination.vue'
 import ModalDetalleIncapacidad from '@/components/RecursosHumanos/Incapacidades/ModalDetalleIncapacidad.vue'
+import { useToast } from 'vue-toastification'
 
 export default {
   components: {
@@ -183,6 +199,7 @@ export default {
   },
   data() {
     return {
+      toast: null,
       page: 1,
       totalPages: 1,
       fechaFiltro: null,
@@ -193,6 +210,8 @@ export default {
       incapacidadSelected: {},
       accionAprobar: '',
       showModalDetalle: false,
+      isStoring: false,
+      isEditing: false,
       showModalAprobarRechazar: false,
       idIncapacidadEliminar: null,
       showModalEliminar: false
@@ -230,8 +249,10 @@ export default {
         filtros.id_empleado = id_empleado
         this.headersTabla = this.headersTabla.filter((header) => header.valor != 'empleado')
       }
+      // Determinar la ruta basada en el valor de isGerente
+      const ruta = this.isGerente ? 'api/incapacidades/gerente' : 'api/incapacidades/listado'
       axios
-        .get('api/incapacidades/gerente', { params: filtros })
+        .get(ruta, { params: filtros })
         .then((response) => {
           console.log(response.data)
           this.itemsTabla = response.data.data
@@ -255,20 +276,41 @@ export default {
       this.showModalAprobarRechazar = true
     },
     closeModal() {
-      this.incapacidadSelected = ''
+      this.incapacidadSelected = {}
       this.showModalDetalle = false
+      this.isStoring = false
+      this.isEditing = false
     },
     closeAprobarRechazarModal() {
-      this.incapacidadSelected = ''
+      this.incapacidadSelected = {}
       this.showModalAprobarRechazar = false
     },
     aprobarRechazarJustificacion() {
       this.closeAprobarRechazarModal()
       this.getJustificaciones()
     },
+    incapacidadCreada() {
+      this.closeModal()
+      this.getJustificaciones()
+    },
     eliminarSolicitud(item) {
       this.idIncapacidadEliminar = item.id
       this.showModalEliminar = true
+    },
+    eliminarSolicitud(item) {
+      axios.delete(`api/incapacidades/${item.id}`)
+        .then(response => {
+          console.log(response)
+          if (response.status === 200) {
+            this.getJustificaciones() // Actualiza la lista de solicitudes
+          } else {
+            throw new Error('La solicitud no se eliminó correctamente.')
+          }
+        })
+        .catch(error => {
+          console.error(error)
+          this.toast.error('Ocurrió un error al eliminar la solicitud de incapacidad.')
+        })
     }
   },
   watch: {
